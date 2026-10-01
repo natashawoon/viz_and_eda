@@ -45,3 +45,160 @@ weather_df
     ##  9 CentralPark_NY USW00094728 2021-01-09     0   2.8  -4.3
     ## 10 CentralPark_NY USW00094728 2021-01-10     0   5    -1.6
     ## # ℹ 2,180 more rows
+
+Let’s make a scatterplot!
+
+``` r
+ggplot(weather_df, aes(x = tmin, y = tmax)) + 
+  geom_point()
+```
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](viz_and_eda_rmarkdown_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+I always like the dataframe first.
+
+``` r
+ggp_temp_scatterplot = 
+  weather_df |>
+  ggplot(aes(x = tmin, y = tmax))+
+  geom_point()
+
+ggp_temp_scatterplot
+```
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](viz_and_eda_rmarkdown_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+Let’s make this a bit fancier…
+
+``` r
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .25) + 
+  geom_smooth(se = FALSE)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](viz_and_eda_rmarkdown_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+Where you put the aesthetics matters
+
+``` r
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax))+
+  geom_point(aes(color = name), alpha = .25) +  
+  geom_smooth(se = FALSE)
+```
+
+    ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](viz_and_eda_rmarkdown_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+    The aesthetics are up to you 
+
+
+    ``` r
+    weather_df |>
+    ggplot(aes(x = tmin, y = tmax, color = name)) + 
+    geom_smooth(se = FALSE)
+
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
+
+![](viz_and_eda_rmarkdown_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+Show faceting
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  facet_grid(. ~name)
+```
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](viz_and_eda_rmarkdown_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+facet_grid
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  facet_grid(name ~ .)
+```
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](viz_and_eda_rmarkdown_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  facet_grid(cols = vars(name))
+```
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](viz_and_eda_rmarkdown_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+Let’s look at something else.
+
+``` r
+weather_df |>
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_point(aes(size = prcp), alpha = .5) + 
+  geom_smooth(se = FALSE) +
+  facet_grid(. ~ name)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
+
+    ## Warning: Removed 19 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](viz_and_eda_rmarkdown_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+Make a plot of central park tmax v tmin only, and convert temperatures
+from celcius to farenheit.
+
+``` r
+weather_df |>
+  filter(name == "CentralPark_NY") |>
+  mutate(
+  tmax = tmax* (9/5) + 32,
+  tmin = tmin* (9/5) + 32
+) |>
+  ggplot(aes( x = tmin, y = tmax)) + 
+  geom_point() 
+```
+
+![](viz_and_eda_rmarkdown_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
