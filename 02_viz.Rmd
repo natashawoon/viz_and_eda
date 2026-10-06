@@ -142,3 +142,38 @@ ggp_seasonal =
 (ggp_tmax_tmin + ggp_prcp_density) /ggp_seasonal
 ```
 
+## Data manipulation 
+
+Start with factors (factor variables).
+
+boxplots!
+
+```{r}
+weather_df |> 
+  mutate(name = fct_relevel(name, c("Molokai_HI", "CentralPark_NY", "Waterhole_WA"))) |>
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+```
+
+```{r}
+weather_df |> 
+  mutate(name = fct_reorder(name, tmax)) |>
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+```
+
+Make that distribution plot 
+
+```{r}
+weather_df |>
+  select(name, tmax, tmin) |>
+  pivot_longer(
+    tmax:tmin,
+    names_to = "observation",
+    values_to = "temp"
+  ) |>
+  ggplot(aes(x = temp, fill = observation)) +
+  geom_density(alpha = .5) +
+  facet_grid(. ~ name)
+```
+
